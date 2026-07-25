@@ -1,0 +1,31 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"networking.k8s.io/v1","kind":"Ingress","metadata":{"annotations":{},"name":"nginx","namespace":"default"},"spec":{"defaultBackend":{"service":{"name":"nginx","port":{"number":80}}},"ingressClassName":"tailscale","tls":[{"hosts":["nginx"]}]}}
+  creationTimestamp: "2026-07-25T00:17:47Z"
+  finalizers:
+  - tailscale.com/finalizer
+  generation: 1
+  name: nginx
+  namespace: default
+  resourceVersion: "686487"
+  uid: e350346d-8b3d-4128-a170-2c6d080c9a02
+spec:
+  defaultBackend:
+    service:
+      name: nginx
+      port:
+        number: 80
+  ingressClassName: tailscale
+  tls:
+  - hosts:
+    - nginx
+status:
+  loadBalancer:
+    ingress:
+    - hostname: nginx.taild425ba.ts.net
+      ports:
+      - port: 443
+        protocol: TCP
