@@ -6,7 +6,6 @@
     kubeconfig: /etc/rancher/k3s/k3s.yaml
   loop:
     - "{{ playbook_dir }}/../manifests/configmap.yaml"
-    - "{{ playbook_dir }}/../manifests/secret.yaml"
     - "{{ playbook_dir }}/../manifests/deployments.yaml"
     - "{{ playbook_dir }}/../manifests/services.yaml"
     - "{{ playbook_dir }}/../manifests/ingress.yaml"
