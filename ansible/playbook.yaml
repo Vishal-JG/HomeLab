@@ -32,8 +32,7 @@
         src: "{{ item }}"
         kubeconfig: /etc/rancher/k3s/k3s.yaml
       loop:
-        - ../manifests/deployment.yaml
-        - ../manifests/service.yaml
+        - ../manifests/deployments.yaml
+        - ../manifests/services.yaml
         - ../manifests/ingress.yaml
         - ../manifests/configmap.yaml
-        - ../manifests/secret.yaml
