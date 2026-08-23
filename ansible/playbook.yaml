@@ -2,37 +2,8 @@
 - hosts: homelab
   become: true
   vars_files:
-     - secrets.yaml
-  tasks:
-    - name: Check if k3s is installed
-      ansible.builtin.stat:
-        path: /usr/local/bin/k3s
-      register: k3s_installed
-
-    - name: Install k3s
-      ansible.builtin.shell: curl -sfL https://get.k3s.io | sh -
-      when: not k3s_installed.stat.exists
-
-    - name: Check if tailscaled is active
-      ansible.builtin.systemd:
-        name: tailscaled
-      register: ts_service
-      failed_when: false
-      changed_when: false
-
-    - name: Install and join Tailscale
-      ansible.builtin.shell: |
-        curl -fsSL https://tailscale.com/install.sh | sh
-        tailscale up --authkey={{ tailscale_auth_key }}
-      when: ts_service.status.ActiveState is not defined or ts_service.status.ActiveState != "active"
-
-    - name: Apply Briefly manifests
-      kubernetes.core.k8s:
-        state: present
-        src: "{{ item }}"
-        kubeconfig: /etc/rancher/k3s/k3s.yaml
-      loop:
-        - ../manifests/deployments.yaml
-        - ../manifests/services.yaml
-        - ../manifests/ingress.yaml
-        - ../manifests/configmap.yaml
+    - secrets.yaml
+  roles:
+    - k3s-install
+    - tailscale-setup
+    - app-deploy
