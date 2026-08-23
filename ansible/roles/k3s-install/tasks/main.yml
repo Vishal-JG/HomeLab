@@ -1,0 +1,22 @@
+﻿---
+- name: Check if k3s is installed
+  ansible.builtin.stat:
+    path: /usr/local/bin/k3s
+  register: k3s_installed
+
+- name: Install k3s
+  ansible.builtin.shell: curl -sfL https://get.k3s.io | sh -
+  when: not k3s_installed.stat.exists
+
+- name: Wait for k3s node to be ready
+  ansible.builtin.shell: k3s kubectl get nodes
+  register: k3s_nodes
+  until: k3s_nodes.rc == 0
+  retries: 10
+  delay: 5
+  changed_when: false
+
+- name: Ensure kubeconfig is readable by ansible user
+  ansible.builtin.file:
+    path: /etc/rancher/k3s/k3s.yaml
+    mode: "0644"

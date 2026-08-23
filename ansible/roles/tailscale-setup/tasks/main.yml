@@ -1,0 +1,30 @@
+﻿---
+- name: Check if tailscaled is active
+  ansible.builtin.systemd:
+    name: tailscaled
+  register: ts_service
+  failed_when: false
+  changed_when: false
+
+- name: Install and join Tailscale
+  ansible.builtin.shell: |
+    curl -fsSL https://tailscale.com/install.sh | sh
+    tailscale up --authkey={{ tailscale_auth_key }}
+  when: ts_service.status.ActiveState is not defined or ts_service.status.ActiveState != "active"
+
+- name: Add Tailscale Helm repo
+  kubernetes.core.helm_repository:
+    name: tailscale
+    repo_url: https://pkgs.tailscale.com/helmcharts
+
+- name: Install Tailscale Kubernetes Operator
+  kubernetes.core.helm:
+    name: tailscale-operator
+    chart_ref: tailscale/tailscale-operator
+    release_namespace: tailscale
+    create_namespace: true
+    kubeconfig: /etc/rancher/k3s/k3s.yaml
+    values:
+      oauth:
+        clientId: "{{ tailscale_oauth_client_id }}"
+        clientSecret: "{{ tailscale_oauth_client_secret }}"
